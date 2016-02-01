@@ -4,6 +4,7 @@ Proto0.Play = function(game){
   this.levelIndex = 0;
   this.levels = [];
   this.currentLevel = {};
+  this.blinkCount = 0;
 };
 
 Proto0.Play.prototype = {
@@ -22,10 +23,18 @@ Proto0.Play.prototype = {
     this.dude.animations.add('blink', [0,1,2,3,4,5], 5, true);
     this.dude.scale.y = 0.5;
     this.dude.scale.x = 0.5;
-    // game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+    game.time.events.loop(Phaser.Timer.SECOND*5, this.blink, this);
   },
 
-  update: function() {
+  update: function() {},
+  
+  blink: function(){
     this.dude.animations.play('blink');
+    var dude = this.dude;
+    setTimeout(function(dude){
+      dude.animations.stop('blink');
+      dude.frame = 0;
+    }, 1010, dude);
+
   }
 };
