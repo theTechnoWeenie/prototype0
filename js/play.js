@@ -1,6 +1,6 @@
 var Proto0 = Proto0 || {};
 var INIT_BUMP = 150;
-var ACCELERATION = 100;
+var ACCELERATION = 150;
 var MAX_DECREASE = 5;
 var MAX_SPEED = 300;
 Proto0.Play = function(game){
@@ -58,23 +58,25 @@ Proto0.Play.prototype = {
   moveDude: function(){
     var xbutton = false;
     var ybutton = false;
+    var xoomph = this.dude.body.acceleration.x > 0 == this.dude.body.velocity.x > 0 ? 1 : 4;
+    var yoomph = this.dude.body.acceleration.y > 0 == this.dude.body.velocity.y > 0 ? 1 : 4;
     if(this.controls.left.isDown){
-      this.dude.body.acceleration.x = -1 * (ACCELERATION + 50);
+      this.dude.body.acceleration.x = -1 * (ACCELERATION) * xoomph;
       this.dude.body.velocity.x = this.dude.body.velocity.x === 0 ? -(INIT_BUMP) : this.dude.body.velocity.x;
       xbutton = true;
     }
     if(this.controls.right.isDown){
-      this.dude.body.acceleration.x = (ACCELERATION + 50);
+      this.dude.body.acceleration.x = (ACCELERATION) * xoomph;
       this.dude.body.velocity.x = this.dude.body.velocity.x === 0 ? INIT_BUMP : this.dude.body.velocity.x;
       xbutton = true;
     }
     if(this.controls.up.isDown){
-      this.dude.body.acceleration.y = -1 * (ACCELERATION + 50);
+      this.dude.body.acceleration.y = -1 * (ACCELERATION) * yoomph;
       this.dude.body.velocity.y = this.dude.body.velocity.y === 0 ? -(INIT_BUMP) : this.dude.body.velocity.y;
       ybutton = true;
     }
     if(this.controls.down.isDown){
-      this.dude.body.acceleration.y = (ACCELERATION + 50);
+      this.dude.body.acceleration.y = (ACCELERATION) * yoomph;
       this.dude.body.velocity.y = this.dude.body.velocity.y === 0 ? INIT_BUMP : this.dude.body.velocity.y;
       ybutton = true;
     }
@@ -84,6 +86,7 @@ Proto0.Play.prototype = {
     //keep speed between 0 and MAX_SPEED
     this.clampSpeed();
   },
+  // TODO: This only works in the negative direction?
   clampSpeed: function(){
     var x = Math.min(MAX_SPEED, this.dude.body.velocity.x);
     x = Math.max(-(MAX_SPEED), this.dude.body.velocity.x);
@@ -91,8 +94,9 @@ Proto0.Play.prototype = {
     var y = Math.min(MAX_SPEED, this.dude.body.velocity.y);
     x = Math.max(-(MAX_SPEED), this.dude.body.velocity.y);
     this.dude.body.velocity.y = y;
-    console.log('x: ', this.dude.body.velocity.x, ' y: ', this.dude.body.velocity.y);
+    console.log('vx: ', this.dude.body.velocity.x, ' vy: ', this.dude.body.velocity.y);
   },
+  //TODO: This leaves .5, and -.5 somtimes... that's not good.
   decayX: function(xbutton){
     var scalarx = MAX_DECREASE * (this.dude.body.velocity.x / MAX_SPEED);
     var deltax = Math.min(MAX_DECREASE, Math.floor(Math.abs(this.dude.body.velocity.x) + scalarx));
