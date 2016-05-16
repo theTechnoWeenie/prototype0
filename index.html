@@ -4,7 +4,7 @@
   <script type="text/javascript" src="js/load.js"></script>
   <script type="text/javascript" src="js/play.js"></script>
   <script type="text/javascript">
-    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
+    var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game');
     game.state.add('load', Proto0.Load);
     game.state.add('play', Proto0.Play);
     game.state.start('load');

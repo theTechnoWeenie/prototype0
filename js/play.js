@@ -36,7 +36,15 @@ Proto0.Play.prototype = {
 
   update: function() {
     this.moveDude();
+    game.physics.arcade.collide(this.dude, this.walls);
   },
+
+  // render: function(){
+  //   game.debug.body(this.dude);
+  //   this.walls.forEachAlive(function(wall){
+  //     game.debug.body(wall);
+  //   }, this);
+  // },
 
   blink: function(){
     this.dude.animations.play('blink');
@@ -49,7 +57,7 @@ Proto0.Play.prototype = {
   placeProtagonist: function(){
     this.dude = game.add.sprite(game.width / 2, game.height / 2,'dude');
     game.physics.arcade.enable(this.dude);
-    game.physics.arcade.enable(this.dude);
+    this.dude.body.collideWorldBounds = true;
     this.dude.animations.add('blink', [0,1,2,3,4,5], 5, true);
     this.dude.scale.y = 0.5;
     this.dude.scale.x = 0.5;
@@ -94,7 +102,7 @@ Proto0.Play.prototype = {
     var y = Math.min(MAX_SPEED, this.dude.body.velocity.y);
     x = Math.max(-(MAX_SPEED), this.dude.body.velocity.y);
     this.dude.body.velocity.y = y;
-    console.log('vx: ', this.dude.body.velocity.x, ' vy: ', this.dude.body.velocity.y);
+    // console.log('vx: ', this.dude.body.velocity.x, ' vy: ', this.dude.body.velocity.y);
   },
   //TODO: This leaves .5, and -.5 somtimes... that's not good.
   decayX: function(xbutton){
@@ -122,50 +130,55 @@ Proto0.Play.prototype = {
     }
   },
   placeWalls: function(){
+    this.walls = game.add.group();
+    this.walls.enableBody = true;
     //place top and bottom wall
     for(var i = 1; i < Math.floor(game.width / 32) - 1; i++){
-      var topWall = game.add.sprite(i*32 + 32, 0, 'wall_tile');
+      var topWall = this.walls.create(i*32 + 32, 0, 'wall_tile');
       topWall.angle = 90;
       topWall.animations.add('glow', [0,1,2,3,4,5], 5, true);
       topWall.animations.play('glow');
-      topWall.scale.x = 0.25;
-      topWall.scale.y= 0.5;
-      var bottomWall = game.add.sprite(i*32, game.height, 'wall_tile');
-      bottomWall.angle = 270;
+      topWall.body.immovable = true;
+      var bottomWall = this.walls.create(i*32, game.height - 64, 'wall_tile');
+      bottomWall.angle = 90;
       bottomWall.animations.add('glow', [0,1,2,3,4,5], 5, true);
       bottomWall.animations.play('glow');
-      bottomWall.scale.x = 0.25;
-      bottomWall.scale.y = 0.5;
+      bottomWall.body.immovable = true;
     }
     for(i = 1; i < Math.floor(game.height / 32); i++){
-      var left = game.add.sprite(0, i*32, 'wall_tile');
+      var left = this.walls.create(0, i*32, 'wall_tile');
       left.animations.add('glow', [0,1,2,3,4,5], 5, true);
       left.animations.play('glow');
-      left.scale.x = 0.25;
-      left.scale.y= 0.5;
-      var right = game.add.sprite(game.width, i*32 + 32, 'wall_tile');
-      right.angle = 180;
+      left.body.immovable = true;
+      var right = this.walls.create(game.width - 64, i*32, 'wall_tile');
       right.animations.add('glow', [0,1,2,3,4,5], 5, true);
       right.animations.play('glow');
-      right.scale.x = 0.25;
-      right.scale.y = 0.5;
+      right.body.immovable = true;
     }
     //corners
-    var corner = game.add.sprite(0, 32, 'corner');
+    var corner = this.walls.create(0, 32, 'corner');
     corner.scale.x = 0.5;
     corner.scale.y = 0.5;
     corner.angle = -90;
-    corner = game.add.sprite(game.width - 32, 0, 'corner');
+    console.log(corner.body);
+    corner.body.immovable = true;
+    corner = this.walls.create(game.width - 32, 0, 'corner');
     corner.scale.x = 0.5;
     corner.scale.y = 0.5;
-    corner = game.add.sprite(32,game.height, 'corner');
+    corner.body.immovable = true;
+    corner = this.walls.create(32,game.height, 'corner');
     corner.scale.x = 0.5;
     corner.scale.y = 0.5;
     corner.angle = 180;
-    corner = game.add.sprite(game.width,game.height - 32, 'corner');
+    corner.body.immovable = true;
+    corner.body.height = 32;
+    corner.body.width = 32;
+    corner = this.walls.create(game.width,game.height - 32, 'corner');
     corner.scale.x = 0.5;
     corner.scale.y = 0.5;
     corner.angle = 90;
-
+    corner.body.immovable = true;
+    corner.body.height = 32;
+    corner.body.width = 32;
   }
 };
